@@ -6,6 +6,18 @@ given keys against nodes.
 Each node is given it's own goroutine to check the keys with, the more nodes you bother the quicker it should work, in theory. Addresses are given in the electrum.txt file, every row contains one node-address in the format address:port.
 https://1209k.com/bitcoin-eye/ele.php
 
+
+##### [Install Go](http://golang.org/doc/install)
+
+##### Install dependencies:
+```bash
+$ go get github.com/btcsuite/btcutil
+$ go get github.com/qshuai/go-electrum/electrum
+```
+##### Run:
+```bash
+$ go run main.go
+```
 ### Example Output
 ```
 address 16xxhmdtX9JNhHSKThTmqSHFcpR6MsM6s5 has no history..
