@@ -12,7 +12,7 @@ https://1209k.com/bitcoin-eye/ele.php
 ##### Install dependencies:
 ```bash
 $ go get github.com/btcsuite/btcutil
-$ go get github.com/qshuai/go-electrum/electrum
+$ go get -u github.com/qshuai/go-electrum/electrum
 ```
 ##### Run:
 ```bash
