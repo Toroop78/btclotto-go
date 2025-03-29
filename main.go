@@ -7,16 +7,15 @@ import (
 	"crypto/rand"
 	"os"
 	"sync"
-	"github.com/btcsuite/btcd/btcec"
+	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcutil"
-	"github.com/qshuai/go-electrum/electrum"
+	"github.com/btcsuite/btcd/btcutil"
+	"github.com/crytoken/electrum-go"
 )
 
 func main() {
 
     padded := make([]byte, 32)
-	electrum.DebugMode = false
 	var wg sync.WaitGroup
 
 	file, err := os.Open("electrum.txt")
@@ -33,22 +32,22 @@ func main() {
 	for _, line := range nodes {
 		go func(address string) {
 			defer wg.Done()
-			node := electrum.NewNode()
-			if err := node.ConnectTCP(address); err != nil {
+			client, err := electrum.NewElectrumClient(address, "bitcoin")
+			if err != nil {
 				log.Fatal(err)
 			}
 			for {
 			    rand.Read(padded)
 
-				privkey, public := btcec.PrivKeyFromBytes(btcec.S256(), padded)
+				privkey, public := btcec.PrivKeyFromBytes(padded)
                                 wifu, _ := btcutil.NewWIF(privkey, &chaincfg.MainNetParams, false)
 				uaddr, _ := btcutil.NewAddressPubKey(public.SerializeUncompressed(), &chaincfg.MainNetParams)
 				
-				transactions, err := node.BlockchainAddressGetHistory(uaddr.EncodeAddress())
+				conf, _, err := client.GetTxHistory(uaddr.EncodeAddress())
 				if err != nil {
 					fmt.Printf("error with address %s: %s", uaddr.EncodeAddress(), err)
 				}
-				if len(transactions) == 0 {
+				if len(conf) == 0 {
 					fmt.Printf("address %s has no history..\n", uaddr.EncodeAddress())
 				} else {
 					fmt.Printf("address %s has use history!!!!!!!!! (private key %x)\n", uaddr.EncodeAddress(), wifu.String())
